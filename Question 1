@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ALPHABET_SIZE 26
+
+typedef struct TrieNode {
+    struct TrieNode* children[ALPHABET_SIZE];
+    int isEndOfWord;
+} TrieNode;
+
+TrieNode* createNode() {
+    TrieNode* newNode = (TrieNode*)malloc(sizeof(TrieNode));
+    for (int i = 0; i < ALPHABET_SIZE; i++) {
+        newNode->children[i] = NULL;
+    }
+    newNode->isEndOfWord = 0;
+    return newNode;
+}
+
+void insert(TrieNode* root, char* word) {
+    TrieNode* current = root;
+    for (int i = 0; i < strlen(word); i++) {
+        int index = word[i] - 'a';
+        if (current->children[index] == NULL) {
+            current->children[index] = createNode();
+        }
+        current = current->children[index];
+    }
+    current->isEndOfWord = 1;
+}
+
+int search(TrieNode* root, char* word) {
+    TrieNode* current = root;
+    for (int i = 0; i < strlen(word); i++) {
+        int index = word[i] - 'a';
+        if (current->children[index] == NULL) {
+            return 0;
+        }
+        current = current->children[index];
+    }
+    return current->isEndOfWord;
+}
+
+int main() {
+    TrieNode* root = createNode();
+    insert(root, "apple");
+    insert(root, "app");
+    insert(root, "banana");
+    printf("%d\n", search(root, "apple")); 
+    printf("%d\n", search(root, "app"));   
+    printf("%d\n", search(root, "banana")); 
+    printf("%d\n", search(root, "ban"));   
+    return 0;
+}
