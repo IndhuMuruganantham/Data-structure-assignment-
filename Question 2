@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* front;
+    Node* rear;
+} CircularQueue;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+CircularQueue* createQueue() {
+    CircularQueue* queue = (CircularQueue*)malloc(sizeof(CircularQueue));
+    queue->front = NULL;
+    queue->rear = NULL;
+    return queue;
+}
+
+int front(CircularQueue* queue) {
+    if (queue->front == NULL) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+    return queue->front->data;
+}
+int rear(CircularQueue* queue) {
+    if (queue->rear == NULL) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+    return queue->rear->data;
+}
+
+void enQueue(CircularQueue* queue, int value) {
+    Node* newNode = createNode(value);
+    if (queue->front == NULL) {
+        queue->front = newNode;
+        queue->rear = newNode;
+        newNode->next = queue->front;
+    } else {
+        queue->rear->next = newNode;
+        queue->rear = newNode;
+        newNode->next = queue->front;
+    }
+}
+
+
+int deQueue(CircularQueue* queue) {
+    if (queue->front == NULL) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+    int data = queue->front->data;
+    Node* temp = queue->front;
+    if (queue->front == queue->rear) {
+        queue->front = NULL;
+        queue->rear = NULL;
+    } else {
+        queue->front = queue->front->next;
+        queue->rear->next = queue->front;
+    }
+    free(temp);
+    return data;
+}
+
+int main() {
+    CircularQueue* queue = createQueue();
+    enQueue(queue, 1);
+    enQueue(queue, 2);
+    enQueue(queue, 3);
+    printf("Front: %d\n", front(queue));
+    printf("Rear: %d\n", rear(queue));
+    printf("Dequeued: %d\n", deQueue(queue));
+    printf("Front: %d\n", front(queue));
+    printf("Rear: %d\n", rear(queue));
+    return 0;
+}
